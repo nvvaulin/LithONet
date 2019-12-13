@@ -49,7 +49,7 @@ class PSPNet(BaseModel):
 
         self.initial = nn.Sequential(*list(model.children())[:4])
         if in_channels != 3:
-            self.initial[0] = nn.Conv2d(in_channels, 64, kernel_size=7, stride=2, padding=3, bias=False)
+            self.initial[0] = nn.Conv2d(in_channels, 128, kernel_size=7, stride=2, padding=3, bias=False)
         self.initial = nn.Sequential(*self.initial)
         
         self.layer1 = model.layer1

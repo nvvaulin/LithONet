@@ -46,7 +46,7 @@ class BaseDataSet(Dataset):
             else:
                 h, w = (int(self.crop_size * h / w), self.crop_size)
 
-            image = np.concatenate([cv2.resize(image[...,i], (w, h), interpolation=cv2.INTER_LINEAR)[...,None] for i in range(imae.shape[-1])],axis=-1)
+            image = np.concatenate([cv2.resize(image[...,i], (w, h), interpolation=cv2.INTER_LINEAR)[...,None] for i in range(image.shape[-1])],axis=-1)
             label = Image.fromarray(label).resize((w, h), resample=Image.NEAREST)
             label = np.asarray(label, dtype=np.int32)
 

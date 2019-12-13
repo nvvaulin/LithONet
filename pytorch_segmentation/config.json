@@ -18,7 +18,7 @@
         "type": "Norway",
         "args":{
             "data_dir": "../data/Norway",
-            "batch_size": 8,
+            "batch_size": 6,
             "crop_size": 380,
             "augment": true,
             "shuffle": true,
@@ -35,7 +35,7 @@
         "type": "Norway",
         "args":{
             "data_dir": "../data/Norway",
-            "batch_size": 8,
+            "batch_size": 6,
             "crop_size": 380,
             "val": true,
             "split": "val",
@@ -63,16 +63,16 @@
     "trainer": {
         "epochs": 80,
         "save_dir": "saved/",
-        "save_period": 10,
+        "save_period": 1,
   
         "monitor": "max Mean_IoU",
-        "early_stop": 10,
+        "early_stop": 1,
         
         "tensorboard": true,
         "log_dir": "saved/runs",
         "log_per_iter": 20,
 
         "val": true,
-        "val_per_epochs": 5
+        "val_per_epochs": 1
     }
 }
