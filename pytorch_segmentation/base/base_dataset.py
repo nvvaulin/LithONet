@@ -46,7 +46,7 @@ class BaseDataSet(Dataset):
             else:
                 h, w = (int(self.crop_size * h / w), self.crop_size)
 
-            image = cv2.resize(image, (w, h), interpolation=cv2.INTER_LINEAR)
+            image = np.concatenate([cv2.resize(image[...,i], (w, h), interpolation=cv2.INTER_LINEAR)[...,None] for i in range(imae.shape[-1])],axis=-1)
             label = Image.fromarray(label).resize((w, h), resample=Image.NEAREST)
             label = np.asarray(label, dtype=np.int32)
 
@@ -70,7 +70,7 @@ class BaseDataSet(Dataset):
             else:
                 longside = self.base_size
             h, w = (longside, int(1.0 * longside * w / h + 0.5)) if h > w else (int(1.0 * longside * h / w + 0.5), longside)
-            image = cv2.resize(image, (w, h), interpolation=cv2.INTER_LINEAR)
+            image = np.concatenate([cv2.resize(image[...,i], (w, h), interpolation=cv2.INTER_LINEAR)[...,None] for i in range(image.shape[-1])],axis=-1)
             label = cv2.resize(label, (w, h), interpolation=cv2.INTER_NEAREST)
     
         h, w, _ = image.shape
@@ -79,7 +79,7 @@ class BaseDataSet(Dataset):
             angle = random.randint(-10, 10)
             center = (w / 2, h / 2)
             rot_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
-            image = cv2.warpAffine(image, rot_matrix, (w, h), flags=cv2.INTER_LINEAR)#, borderMode=cv2.BORDER_REFLECT)
+            image = np.concatenate([cv2.warpAffine(image[...,i], rot_matrix, (w, h), flags=cv2.INTER_LINEAR)[:,:,None] for i in range(image.shape[-1])],axis=-1)#, borderMode=cv2.BORDER_REFLECT)
             label = cv2.warpAffine(label, rot_matrix, (w, h), flags=cv2.INTER_NEAREST)#,  borderMode=cv2.BORDER_REFLECT)
 
         # Padding to return the correct crop size
@@ -93,7 +93,7 @@ class BaseDataSet(Dataset):
                 "right": pad_w,
                 "borderType": cv2.BORDER_CONSTANT,}
             if pad_h > 0 or pad_w > 0:
-                image = cv2.copyMakeBorder(image, value=0, **pad_kwargs)
+                image = np.concatenate([cv2.copyMakeBorder(image[...,i], value=0, **pad_kwargs)[:,:,None] for i in range(image.shape[-1])],axis=-1)
                 label = cv2.copyMakeBorder(label, value=0, **pad_kwargs)
             
             # Cropping 
@@ -130,7 +130,6 @@ class BaseDataSet(Dataset):
             image, label = self._augmentation(image, label)
 
         label = torch.from_numpy(np.array(label, dtype=np.int32)).long()
-        image = Image.fromarray(np.uint8(image))
         if self.return_id:
             return  self.normalize(self.to_tensor(image)), label, image_id
         return self.normalize(self.to_tensor(image)), label
