@@ -4,3 +4,7 @@ tqdm==4.32.2
 tensorboard==1.14.0
 Pillow==6.2.0
 opencv-python==4.1.0.25
+sklearn
+scikit-image>=0.16.2
+future
+scipy

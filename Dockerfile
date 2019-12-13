@@ -8,5 +8,5 @@ RUN pip install opencv-python
 RUN pip install opencv-contrib-python
 RUN pip install jupyter
 RUN pip install matplotlib
-RUN pip install torchgeometry
+RUN pip install torchgeometry sklearn scipy future
 ENV SHELL /bin/bash

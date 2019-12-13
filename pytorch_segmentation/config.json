@@ -13,7 +13,7 @@
     },
 
     "train_loader": {
-        "type": "VOC",
+        "type": "Norway",
         "args":{
             "data_dir": "../data/Norway",
             "batch_size": 8,
@@ -31,7 +31,7 @@
     },
 
     "val_loader": {
-        "type": "VOC",
+        "type": "Norway",
         "args":{
             "data_dir": "../data/Norway",
             "batch_size": 8,
