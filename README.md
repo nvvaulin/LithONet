@@ -25,11 +25,9 @@ Download link - . Put `models/` folder to the root directory of this repo.
 Put `Parihaka3D` folder (or some .sgy file) to `data/` folder.
 
 Now you can run scripts. Run inference script:
-```python seismic/inference/write_masks_to_segy.py
-```
+`python seismic/inference/write_masks_to_segy.py`
 OR
-```python seismic/inference/write_masks_to_segy.py --srcpath <path_to_your_.sgy_file>
-```
+`python seismic/inference/write_masks_to_segy.py --srcpath <path_to_your_.sgy_file>`
 
 To gather predictions for entire cube, run
 ```# This operation will take ~4 hours
