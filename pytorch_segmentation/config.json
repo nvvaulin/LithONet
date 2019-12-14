@@ -25,6 +25,7 @@
             "scale": true,
             "flip": true,
             "rotate": true,
+            "elastic": true,
             "blur": false,
             "split": "train_aug",
             "num_workers": 1
@@ -61,15 +62,15 @@
     },
 
     "trainer": {
-        "epochs": 80,
-        "save_dir": "saved/",
+        "epochs": 25,
+        "save_dir": "saved_psp/",
         "save_period": 1,
   
         "monitor": "max Mean_IoU",
         "early_stop": 1,
         
         "tensorboard": true,
-        "log_dir": "saved/runs",
+        "log_dir": "saved_psp/runs",
         "log_per_iter": 20,
 
         "val": true,
