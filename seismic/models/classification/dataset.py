@@ -7,12 +7,14 @@ import pandas as pd
 
 import mat4py
 from torch.utils.data import Dataset
+from seismic.models.classification.transform import scale_img
+
 
 class FaciesDataset(Dataset):
     """Facies dataset"""
 
     def __init__(self, images_path, imagesinfo_path, class_name_to_id, preprocess=None, augmentation=None, transform=None,
-                 test_mode=False, test_size=40):
+                 scale_image=False, test_mode=False, test_size=40):
         """
         Args:
             images_path     (str) : a path to a folder with images;
@@ -24,6 +26,7 @@ class FaciesDataset(Dataset):
                                     required transformations are:
                                         1) transforms.ToTensor(),
                                         2) transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225));
+            scale_image     (bool): whether to scale image (Jeremy scaling)
             test_mode       (bool): whether to use only first test_size images from dataset;
             test_size       (int): how many images to use in test_mode;
         """
@@ -35,6 +38,7 @@ class FaciesDataset(Dataset):
         self.preprocess = preprocess
         self.augmentation = augmentation
         self.transform = transform
+        self.scale_image = scale_image
         if test_mode:
             self.images_info = self.images_info.iloc[:test_size]
             self.labels = self.labels[:test_size]
@@ -50,9 +54,12 @@ class FaciesDataset(Dataset):
             print('\n\n\n')
             print(filename)
             raise Exception(e)
-        image = np.asarray(mat['img']).astype(np.float32)
+        image = np.asarray(mat['img'])
         if image.ndim == 2:
             image = np.repeat(np.expand_dims(image, 2), 3, axis=2)
+        if self.scale_image:
+            image = scale_img(image)
+        image = image.astype(np.float32)
 
         if self.preprocess:
             image = self.preprocess(image=image)['image']
