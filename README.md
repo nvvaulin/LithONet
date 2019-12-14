@@ -20,7 +20,7 @@ pip install -e .
 
 #### 3. Download models  
 
-Download link - . Put `models/` folder to the root directory of this repo.
+Download link - https://drive.google.com/open?id=1ZhVxBKgp6z57X1fzoyP-3qjv9kBQGCsQ. Put all content to the `models/` folder to the root directory of this repo.
 
 #### 4. Data preparation
 
