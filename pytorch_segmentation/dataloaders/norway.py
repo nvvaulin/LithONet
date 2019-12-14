@@ -49,7 +49,7 @@ def rotate90(data,labels):
     resl=np.concatenate([cv2.rotate(labels[:,:,i],cv2.ROTATE_90_CLOCKWISE)[:,:,None] for i in range(labels.shape[-1])],axis=-1)
     return res,resl
     
-def augment_rotation(data,labels,angls=[0]):
+def augment_rotation(data,labels,angls=[0,45]):
     res,resl =[],[]
     for ang in angls:
         if (ang == 0):
@@ -73,8 +73,8 @@ def augment_rotation(data,labels,angls=[0]):
     
 class NorwayDataset(BaseDataSet):
     def __init__(self, **kwargs):
-        self.num_classes = 6
-        self.palette = [0,0,255,255,0,0,0,255,0,255,255,255,255,0,255,0,255,255]
+        self.num_classes = 7
+        self.palette = [0,0,0,0,0,255,255,0,0,0,255,0,255,255,255,255,0,255,0,255,255]
         super(NorwayDataset, self).__init__(**kwargs)
 
     def _set_files(self):
@@ -86,42 +86,26 @@ class NorwayDataset(BaseDataSet):
             self.root = os.path.join(self.root,'train','train')
         else:
             assert False, 'unknown split type,'+self.split
-        self.files = np.load(self.root+'_seismic.npy')
-        self.labels = np.load(self.root+'_labels.npy')
+        self.files = (np.load(self.root+'_seismic.npy')*255).astype(np.uint8)
+        self.labels = np.load(self.root+'_labels.npy')+1
+        
     
     def _load_data(self, index):
         label = self.labels[index]
         data = self.files[index]
-        data = data[:,:,None].astype(np.float32)
-        return data, label, str(index)
+        data = data[:,:,None].astype(np.float32)/255.
+        return data.transpose((1,0,2)), label.transpose((1,0)), str(index)
 
-class NorwayAugDataset(BaseDataSet):
+class NorwayAugDataset(NorwayDataset):
     def __init__(self, **kwargs):
-        self.num_classes = 6
-        self.palette = [0,0,255,255,0,0,0,255,0,255,255,255,255,0,255,0,255,255]
         super(NorwayAugDataset, self).__init__(**kwargs)
 
     def _set_files(self):
-        if 'test' in self.split:
-            self.root = os.path.join(self.root,'test_once','test1')
-        elif 'val' in self.split:
-            self.root = os.path.join(self.root,'test_once','test2')            
-        elif 'train' in self.split:
-            self.root = os.path.join(self.root,'train','train')
-        else:
-            assert False, 'unknown split type,'+self.split
-        self.files = np.load(self.root+'_seismic.npy')
-        self.labels = np.load(self.root+'_labels.npy')
+        super(NorwayAugDataset, self)._set_files()
         self.files, self.labels = augment_rotation(self.files,self.labels)
         self.files, self.labels = self.files, self.labels
     
-    def _load_data(self, index):
-        label = self.labels[index]
-        data = self.files[index]
-        data = data[:,:,None].astype(np.float32)
-        return data, label, str(index)
-
-
+    
 class Norway(BaseDataLoader):
     def __init__(self, data_dir, batch_size, split, crop_size=None, base_size=None, scale=True, num_workers=1, val=False,
                     shuffle=False, flip=False, rotate=False, blur= False, augment=False, val_split= None, return_id=False,elastic=False):

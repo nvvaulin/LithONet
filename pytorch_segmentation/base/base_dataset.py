@@ -107,9 +107,9 @@ class BaseDataSet(Dataset):
             label = cv2.resize(label, (w, h), interpolation=cv2.INTER_NEAREST)
     
         h, w, _ = image.shape
-        # Rotate the image with an angle between -10 and 10
+        # Rotate the image with an angle between -20 and 20
         if self.rotate:
-            angle = random.randint(-10, 10)
+            angle = random.randint(-20, 20)
             center = (w / 2, h / 2)
             rot_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
             image = np.concatenate([cv2.warpAffine(image[...,i], rot_matrix, (w, h), flags=cv2.INTER_LINEAR)[:,:,None] for i in range(image.shape[-1])],axis=-1)#, borderMode=cv2.BORDER_REFLECT)

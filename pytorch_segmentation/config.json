@@ -19,7 +19,7 @@
         "args":{
             "data_dir": "../data/Norway",
             "batch_size": 6,
-            "crop_size": 380,
+            "crop_size": 255,
             "augment": true,
             "shuffle": true,
             "scale": true,
@@ -37,7 +37,6 @@
         "args":{
             "data_dir": "../data/Norway",
             "batch_size": 6,
-            "crop_size": 380,
             "val": true,
             "split": "val",
             "num_workers": 1
@@ -55,7 +54,7 @@
     },
 
     "loss": "CrossEntropyLoss2d",
-    "ignore_index": 255,
+    "ignore_index": 0,
     "lr_scheduler": {
         "type": "Poly",
         "args": {}
