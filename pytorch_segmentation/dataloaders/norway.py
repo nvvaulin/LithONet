@@ -8,6 +8,10 @@ from PIL import Image
 import cv2
 from torch.utils.data import Dataset
 from torchvision import transforms
+import numpy as np
+from scipy.ndimage.interpolation import map_coordinates
+from scipy.ndimage.filters import gaussian_filter
+
 
 def rotate_sampels(data,labels,ang,minsize=255):
     assert (ang > 0) and (ang < 90),'rotate_sampels angle should be in range 0-90,given:'+str(ang)
@@ -45,7 +49,7 @@ def rotate90(data,labels):
     resl=np.concatenate([cv2.rotate(labels[:,:,i],cv2.ROTATE_90_CLOCKWISE)[:,:,None] for i in range(labels.shape[-1])],axis=-1)
     return res,resl
     
-def augment_rotation(data,labels,angls=[0,15,30,45,60,75]):
+def augment_rotation(data,labels,angls=[0]):
     res,resl =[],[]
     for ang in angls:
         if (ang == 0):
@@ -120,7 +124,7 @@ class NorwayAugDataset(BaseDataSet):
 
 class Norway(BaseDataLoader):
     def __init__(self, data_dir, batch_size, split, crop_size=None, base_size=None, scale=True, num_workers=1, val=False,
-                    shuffle=False, flip=False, rotate=False, blur= False, augment=False, val_split= None, return_id=False):
+                    shuffle=False, flip=False, rotate=False, blur= False, augment=False, val_split= None, return_id=False,elastic=False):
         
         self.MEAN = [0]
         self.STD = [1.]
@@ -138,7 +142,8 @@ class Norway(BaseDataLoader):
             'blur': blur,
             'rotate': rotate,
             'return_id': return_id,
-            'val': val
+            'val': val,
+            'elastic': elastic
         }
     
         if split in ["train_aug", "trainval_aug", "val_aug", "test_aug"]:

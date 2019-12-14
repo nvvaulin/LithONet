@@ -6,11 +6,44 @@ from torch.utils.data import Dataset
 from PIL import Image
 from torchvision import transforms
 from scipy import ndimage
+from scipy.ndimage.interpolation import map_coordinates
+from scipy.ndimage.filters import gaussian_filter
+
+
+def elastic_transformations(alpha=50, sigma=5, 
+                            interpolation_order=1):
+    """Returns a function to elastically transform multiple images."""
+    # Good values for:
+    #   alpha: 2000
+    #   sigma: between 40 and 60
+    def _elastic_transform_2D(images):
+        """`images` is a numpy array of shape (K, M, N) of K images of size M*N."""
+        # Take measurements
+        image_shape = images[0].shape
+        # Make random fields
+        dx = np.random.uniform(-1, 1, image_shape) * alpha
+        dy = np.random.uniform(-1, 1, image_shape) * alpha
+        # Smooth dx and dy
+        sdx = gaussian_filter(dx, sigma=sigma, mode='reflect')
+        sdy = gaussian_filter(dy, sigma=sigma, mode='reflect')
+        # Make meshgrid
+        x, y = np.meshgrid(np.arange(image_shape[1]), np.arange(image_shape[0]))
+        # Distort meshgrid indices
+        distorted_indices = (y + sdy).reshape(-1, 1), \
+                            (x + sdx).reshape(-1, 1)
+
+        # Map cooordinates from image to distorted index set
+        transformed_images = np.array([map_coordinates(image, distorted_indices, mode='reflect',
+                                              order=interpolation_order).reshape(image_shape)
+                                       for image in images])
+        return transformed_images
+    return _elastic_transform_2D
 
 class BaseDataSet(Dataset):
     def __init__(self, root, split, mean, std, base_size=None, augment=True, val=False,
-                crop_size=321, scale=True, flip=True, rotate=False, blur=False, return_id=False):
+                crop_size=321, scale=True, flip=True, rotate=False, blur=False, return_id=False,elastic=False):
         self.root = root
+        self.elastic = elastic
         self.split = split
         self.mean = mean
         self.std = std
@@ -104,7 +137,11 @@ class BaseDataSet(Dataset):
             end_w = start_w + self.crop_size
             image = image[start_h:end_h, start_w:end_w]
             label = label[start_h:end_h, start_w:end_w]
-
+        if self.elastic:
+            transform = elastic_transformations()
+            image = np.transpose(transform(np.transpose(image,(2,0,1))),(1,2,0))
+            label = transform(label[None,:,:])[0]
+        
         # Random H flip
         if self.flip:
             if random.random() > 0.5:
