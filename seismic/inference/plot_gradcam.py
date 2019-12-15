@@ -168,8 +168,8 @@ def main():
         print(f'Plots are saved in {args.dstdir}')
 
     else:
-        dstpath = osp.join()
-        with segyio.open(srcpath) as src:
+        dstpath = osp.join(args.dstdir, args.dstfile)
+        with segyio.open(args.srcpath) as src:
             spec = segyio.spec()
             spec.sorting = src.sorting
             spec.format = src.format
@@ -182,14 +182,14 @@ def main():
                 print('Start generating iline masks...')
                 for iline_num in tqdm.tqdm(spec.ilines):
                     image = src.iline[iline_num].T
-                    mask = predict_gradcam_mask(iline_full_trn_cut, model_rosneft, dims=dims, size=size, step=step)
+                    mask = predict_gradcam_mask(image, model, dims=dims, size=size, step=step)
                     dst.iline[iline_num] = mask
                 print('Iline masks successfully generated!')
 
                 print('Start generating xline masks...')
                 for xline_num in tqdm.tqdm(spec.xlines):
                     image = src.xline[iline_num].T
-                    mask = predict_gradcam_mask(iline_full_trn_cut, model_rosneft, dims=dims, size=size, step=step)
+                    mask = predict_gradcam_mask(image, model, dims=dims, size=size, step=step)
                     dst.xline[xline_num] = mask
                 print('Xline masks successfully generated!')
 
