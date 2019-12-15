@@ -9,7 +9,7 @@
 git clone https://github.com/nvvaulin/LithONet.git
 cd LithONet
 git fetch origin
-git checkout features/rewrite_all
+git checkout -b features/rewrite_all origin/features/rewrite_all
 ```
 
 #### 2. Create virtual environment in your favorite Python package manager and run:
@@ -20,7 +20,7 @@ pip install -e .
 
 #### 3. Download models  
 
-Download link - https://drive.google.com/open?id=1ZhVxBKgp6z57X1fzoyP-3qjv9kBQGCsQ. Put all content to the `models/` folder to the root directory of this repo.
+Download models from https://drive.google.com/open?id=1ZhVxBKgp6z57X1fzoyP-3qjv9kBQGCsQ. Put all content to the `models/` folder to the root directory of this repo.
 
 #### 4. Data preparation
 
