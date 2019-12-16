@@ -1,12 +1,12 @@
 {
-    "name": "PSPNet",
+    "name": "segment_refine",
     "n_gpu": 1,
     "use_synch_bn": true,
 
     "arch": {
         "type": "PSPNet",
         "args": {
-            "in_channels": 1,
+            "in_channels": 8,
             "pretrained": false,
             "backbone": "resnet50",
             "freeze_bn": false,
@@ -54,7 +54,7 @@
     },
 
     "loss": "CrossEntropyLoss2d",
-    "ignore_index": 0,
+    "ignore_index": 20,
     "lr_scheduler": {
         "type": "Poly",
         "args": {}

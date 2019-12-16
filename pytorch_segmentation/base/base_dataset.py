@@ -177,11 +177,16 @@ class BaseDataSet(Dataset):
             image, label = self._val_augmentation(image, label)
         elif self.augment:
             image, label = self._augmentation(image, label)
-
+        segmentation = torch.tensor(np.clip(image[:,:,1],0,7),dtype=torch.int64)
+        segmentation = torch.nn.functional.one_hot(segmentation,7)
+        segmentation = torch.transpose(torch.transpose(segmentation,2,0),2,1)
+        image = self.to_tensor(image[:,:,:1].astype(np.float32))
+        image = torch.cat([self.normalize(image),segmentation.type_as(image)],0)
+#         image = self.to_tensor(image)
         label = torch.from_numpy(np.array(label, dtype=np.int32)).long()
         if self.return_id:
-            return  self.normalize(self.to_tensor(image)), label, image_id
-        return self.normalize(self.to_tensor(image)), label
+            return  image, label, image_id
+        return image, label
 
     def __repr__(self):
         fmt_str = "Dataset: " + self.__class__.__name__ + "\n"

@@ -1,4 +1,4 @@
-from base import BaseDataSet, BaseDataLoader
+from base import BaseDataSet, BaseDataLoader,elastic_transformations
 from utils import palette
 import numpy as np
 import os
@@ -92,9 +92,11 @@ class NorwayDataset(BaseDataSet):
     
     def _load_data(self, index):
         label = self.labels[index]
-        data = self.files[index]
-        data = data[:,:,None].astype(np.float32)/255.
-        return data.transpose((1,0,2)), label.transpose((1,0)), str(index)
+        data = (self.files[index]/255.).astype(np.float32)
+        transform = elastic_transformations(4000, 40)
+        segmentation = transform(label[None,:,:])[0]
+#         mask = (segmentation!=label).astype(np.uint8)
+        return np.concatenate((data[...,None],segmentation[...,None]),-1).transpose((1,0,2)), label.transpose((1,0)), str(index)
 
 class NorwayAugDataset(NorwayDataset):
     def __init__(self, **kwargs):
