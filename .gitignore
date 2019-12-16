@@ -1,0 +1,10 @@
+*
+!.gitignore
+!pytorch_segmentation/*.txt
+!pytorch_segmentation/.json
+!pytorch_segmentation/*.py
+!pytorch_segmentation/base/*.py
+!pytorch_segmentation/dataloaders/*.py
+!pytorch_segmentation/images/*.py
+!pytorch_segmentation/models/*.py
+!pytorch_segmentation/utils/*.py
